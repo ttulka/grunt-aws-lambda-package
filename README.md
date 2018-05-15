@@ -56,14 +56,14 @@ The folder where the package files should be found relative to the Gruntfile.
 
 ##### options.include_time
 Type: `Boolean`
-Default value: `true`
+Default value: `false`
 
 Whether or not to timestamp the packages, if set to true the current date/time will be included in the zip name, if false
  then the package name will be constant and consist of just the package name and version.
 
 ##### options.include_version
 Type: `Boolean`
-Default value: `true`
+Default value: `false`
 
 Whether or not to include the NPM package version in the artifact package name. Set to false if you'd prefer a static
  package file name regardless of the version.
@@ -105,7 +105,7 @@ And the following in `package.json`
 
 Then we run `grunt lambda_package`, we should see a new zip file in a new folder called `dist` called something like:
 
-`my-lambda-function_0-0-1_2014-10-30-18-29-4.zip`
+`my-lambda-function.zip`
 
 If you unzip that and look inside you should see something like:
 ```
@@ -114,15 +114,4 @@ package.json
 node_modules/
 node_modules/jquery
 node_modules/jquery/... etc
-```
-
-Given that by default the dist folder is inside your function folder you can easily end up bundling previous packages
- inside subsequent packages therefore it is **strongly advised that you add dist to your .npmignore**.
-
-For example your `.npmignore` might look something like this:
-```
-event.json
-Gruntfile.js
-dist
-*.iml
 ```

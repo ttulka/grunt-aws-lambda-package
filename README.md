@@ -103,7 +103,7 @@ And the following in `package.json`
 }
 ```
 
-Then we run `grunt lambda_package`, we should see a new zip file in a new folder called `dist` called something like:
+Then we run `grunt lambda_package`, we should see a new zip file in a new folder called `dist` called:
 
 `my-lambda-function.zip`
 

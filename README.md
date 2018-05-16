@@ -38,7 +38,7 @@ grunt.initConfig({
 
 ##### options.include_files
 Type: `Array`
-Default value: `[]`
+Default value: `**/*`
 
 List of files to explicitly include in the package, even if they would be ignored by NPM
 

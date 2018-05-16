@@ -20,7 +20,7 @@ packageTask.getHandler = function (grunt) {
             'dist_folder': 'dist',
             'include_time': false,
             'include_version': false,
-            'include_files': [],
+            'include_files': '**/*',
             'base_folder': './',
             'exclude_aws_sdk': true
         });
@@ -54,16 +54,12 @@ packageTask.getHandler = function (grunt) {
             try {
                 fs.copyFileSync('./package-lock.json', install_location + '/package-lock.json');
             } catch (err) { }                 
-                  
+                           
             npm.commands.install(install_location, [], function () {
 
                 var output = fs.createWriteStream(zip_path);
                 var zipArchive = archive('zip');
 
-                /*
-                 * Monkey patch to ensure permissions are always 777
-                 * Prevents issues on Windows for directories that don't have execute permissions
-                 */
                 var old_normalizeEntryData = zipArchive._normalizeEntryData;
                 zipArchive._normalizeEntryData = function (data, stats) {
                     // 0777 file permission
@@ -74,32 +70,14 @@ packageTask.getHandler = function (grunt) {
                 zipArchive.pipe(output);
 
                 function packZip() {
-                    zipArchive.bulk([
-                        {
-                            src: ['./package.json', './README.md'],
-                            dot: true,
-                            expand: true,
-                            cwd: './'
-                        }
-                    ]);
+                    zipArchive.file('./package.json', { name: 'package.json' });
+                    try {
+                        zipArchive.file('./README.md', { name: 'README.md' });
+                    } catch (err) { }  
                     
-                    zipArchive.bulk([
-                        {
-                            src: ['./node_modules/**'],
-                            dot: true,
-                            expand: true,
-                            cwd: install_location
-                        }
-                    ]);
-
-                    zipArchive.bulk([
-                        {
-                            src: options.include_files.length ? options.include_files : ['./**'],
-                            dot: true,
-                            expand: true,
-                            cwd: options.base_folder
-                        }
-                    ]);
+                    zipArchive.directory(install_location + '/node_modules/', 'node_modules');
+                                        
+                    zipArchive.glob(options.include_files, { cwd: options.base_folder, dot: true });
 
                     zipArchive.finalize();
 
@@ -122,6 +100,7 @@ packageTask.getHandler = function (grunt) {
                 if (options.exclude_aws_sdk) {
                     var prefix = npm.prefix;
                     npm.prefix = install_location;
+                    
                     npm.commands.uninstall([install_location, 'aws-sdk'], function () {
                         npm.prefix = prefix;
                         packZip();                 

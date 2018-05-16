@@ -21,8 +21,8 @@
         }
     ],
     "dependencies": {
-        "temporary": "~0.0.8",
-        "archiver": "~0.14.4",
+        "temporary": "^0.0.8",
+        "archiver": "^2.1.1",
         "mkdirp": "^0.5.1",
         "rimraf": "^2.6.2",
         "npm": "^6.0.1",

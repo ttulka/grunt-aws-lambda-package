@@ -40,7 +40,7 @@ grunt.initConfig({
 Type: `Array`
 Default value: `**/*`
 
-Files to explicitly include in the package, even if they would be ignored by NPM
+Files to explicitly include in the package, even if they would be ignored by NPM.
 
 ##### options.dist_folder
 Type: `String`

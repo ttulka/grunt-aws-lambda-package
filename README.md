@@ -67,6 +67,12 @@ Default value: `false`
 
 Whether or not to include the NPM package version in the artifact package name. Set to false if you'd prefer a static
  package file name regardless of the version.
+ 
+##### options.exclude_aws_sdk
+Type: `Boolean`
+Default value: `true`
+
+Whether or not to exclude the AWS-SDK module from the package.
 
 #### Examples
 

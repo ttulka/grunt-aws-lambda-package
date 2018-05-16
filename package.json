@@ -1,7 +1,7 @@
 {
     "name": "grunt-aws-lambda-package",
     "description": "A grunt plugin for packaging AWS Lambda functions.",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "homepage": "https://github.com/ttulka/grunt-aws-lambda-package",
     "author": {
         "name": "Tomas Tulka",
@@ -23,9 +23,9 @@
     "dependencies": {
         "temporary": "~0.0.8",
         "archiver": "~0.14.4",
-        "mkdirp": "~0.5.0",
-        "rimraf": "~2.2.8",
-        "npm": "^2.10.0",
+        "mkdirp": "^0.5.1",
+        "rimraf": "^2.6.2",
+        "npm": "^6.0.1",
         "q": "^1.4.1"
     },
     "keywords": [

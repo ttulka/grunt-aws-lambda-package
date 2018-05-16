@@ -21,11 +21,12 @@ packageTask.getHandler = function (grunt) {
             'include_time': false,
             'include_version': false,
             'include_files': [],
-            'base_folder': './'
+            'base_folder': './',
+            'exclude_aws_sdk': true
         });
 
         var pkg = JSON.parse(fs.readFileSync(path.resolve('./package.json'), "utf8"));
-
+        
         var dir = new tmp.Dir();
         var done = this.async();
 
@@ -38,17 +39,23 @@ packageTask.getHandler = function (grunt) {
         if (options.include_version) {
             archive_name += '-' + pkg.version.replace(/\./g, '_');
         }
-
+       
         npm.load([], function (err, npm) {
 
             npm.config.set('loglevel', 'silent');
             npm.config.set('production', true);
+            npm.config.get('global', false)
 
             var install_location = dir.path;
-            var install_package = install_location + '/node_modules/' + pkg.name;
             var zip_path = install_location + '/' + archive_name + '.zip';
-
-            npm.commands.install(install_location, './', function () {
+            
+            fs.copyFileSync('./package.json', install_location + '/package.json');
+            
+            try {
+                fs.copyFileSync('./package-lock.json', install_location + '/package-lock.json');
+            } catch (err) { }                 
+                  
+            npm.commands.install(install_location, [], function () {
 
                 var output = fs.createWriteStream(zip_path);
                 var zipArchive = archive('zip');
@@ -66,14 +73,22 @@ packageTask.getHandler = function (grunt) {
 
                 zipArchive.pipe(output);
 
-                rimraf(install_package + '/node_modules/aws-sdk', function () {
-
+                function packZip() {
                     zipArchive.bulk([
                         {
-                            src: ['./package.json', './node_modules/**', './README.md'],
+                            src: ['./package.json', './README.md'],
                             dot: true,
                             expand: true,
-                            cwd: install_package
+                            cwd: './'
+                        }
+                    ]);
+                    
+                    zipArchive.bulk([
+                        {
+                            src: ['./node_modules/**'],
+                            dot: true,
+                            expand: true,
+                            cwd: install_location
                         }
                     ]);
 
@@ -102,7 +117,18 @@ packageTask.getHandler = function (grunt) {
                             });
                         });
                     });
-                });
+                }     
+                      
+                if (options.exclude_aws_sdk) {
+                    var prefix = npm.prefix;
+                    npm.prefix = install_location;
+                    npm.commands.uninstall([install_location, 'aws-sdk'], function () {
+                        npm.prefix = prefix;
+                        packZip();                 
+                    });
+                } else {
+                    packZip();
+                }
             });
         });
     };

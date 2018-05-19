@@ -3,13 +3,12 @@
 > A grunt plugin for packaging functions for [AWS Lambda](http://aws.amazon.com/lambda/).
 
 ## Getting Started
-This plugin requires Grunt `~0.4.5`
 
 ```shell
 npm install grunt-aws-lambda-package --save-dev
 ```
 
-Once the plugin has been installed, it may be enabled inside your Gruntfile with this line of JavaScript:
+Once the plugin has been installed, it may be enabled inside your Gruntfile:
 
 ```js
 grunt.loadNpmTasks('grunt-aws-lambda-package');
@@ -18,7 +17,7 @@ grunt.loadNpmTasks('grunt-aws-lambda-package');
 
 ### lambda_package
 
-This task generates a lambda package including npm dependencies using the default npm install functionality.
+This task generates a zip package including npm dependencies using the default `npm install --production` functionality.
 
 In your project's Gruntfile, add a section named `lambda_package` to the data object passed into `grunt.initConfig()`.
 
@@ -27,7 +26,7 @@ grunt.initConfig({
     lambda_package: {
         default: {
             options: {
-                // Task-specific options go here.
+                // Options go here.
             }
         }
     },
@@ -40,7 +39,7 @@ grunt.initConfig({
 Type: `Array`
 Default value: `**/*`
 
-Files to explicitly include in the package, even if they would be ignored by NPM.
+Files to explicitly include in the package, even if they would be ignored by npm.
 
 ##### options.dist_folder
 Type: `String`
@@ -58,15 +57,13 @@ The folder where the package files should be found relative to the Gruntfile.
 Type: `Boolean`
 Default value: `false`
 
-Whether or not to timestamp the packages, if set to true the current date/time will be included in the zip name, if false
- then the package name will be constant and consist of just the package name and version.
+Whether or not to timestamp the packages, if set to true the current date/time will be included in the zip name.
 
 ##### options.include_version
 Type: `Boolean`
 Default value: `false`
 
-Whether or not to include the NPM package version in the artifact package name. Set to false if you'd prefer a static
- package file name regardless of the version.
+Whether or not to include the npm package version in the artifact package name.
  
 ##### options.exclude_aws_sdk
 Type: `Boolean`
@@ -77,39 +74,48 @@ Whether or not to exclude the AWS-SDK module from the package.
 #### Examples
 
 ##### Default Options
-In this example, the default options are used therefore if we have the following in our `Gruntfile.js`:
+In this example, the default options are used therefore if we have the following `Gruntfile.js`:
 
 ```js
-grunt.initConfig({
+module.exports = function(grunt) {
+  
+  grunt.initConfig({
+    pkg: grunt.file.readJSON('package.json'),
+    
     lambda_package: {
         default: {
-            options: {
-                // Task-specific options go here.
-            }
         }
     },
-});
+  });
+  
+  grunt.loadNpmTasks('grunt-aws-lambda-package');
+
+  grunt.registerTask('package', ['lambda_package']); 
+};
 ```
 And the following in `package.json`
 
 ```json
 {
     "name": "my-lambda-function",
-    "description": "An Example Lamda Function",
-    "version": "0.0.1",
-    "private": "true",
+    "version": "1.0.0",
+    "scripts": {
+      "package": "grunt package"
+    },
     "dependencies": {
-        "jquery": "2.1.1"
+        "aws-sdk": "2.243.1",
+        "jquery": "3.3.1"
     },
     "devDependencies": {
-        "grunt": "0.4.*",
-        "grunt-pack": "0.1.*",
-        "grunt-aws-lambda": "0.1.*"
+        "jasmine": "^3.1.0",
+        "grunt": "^1.0.2",
+        "grunt-cli": "^1.2.0",
+        "grunt-aws-lambda-package": "0.0.4",        
     }
 }
 ```
 
-Then we run `grunt lambda_package`, we should see a new zip file in a new folder called `dist` called:
+Then we run `npm run package`, we should see a new zip file in a new folder called `dist` called:
 
 `my-lambda-function.zip`
 
@@ -121,3 +127,5 @@ node_modules/
 node_modules/jquery
 node_modules/jquery/... etc
 ```
+
+No development dependencies, no AWS SDK.

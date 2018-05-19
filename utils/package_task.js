@@ -53,23 +53,36 @@ packageTask.getHandler = function (grunt) {
             
             try {
                 fs.copyFileSync('./package-lock.json', install_location + '/package-lock.json');
-            } catch (err) { }                 
-                           
-            npm.commands.install(install_location, [], function () {
-
-                var output = fs.createWriteStream(zip_path);
-                var zipArchive = archive('zip');
-
-                var old_normalizeEntryData = zipArchive._normalizeEntryData;
-                zipArchive._normalizeEntryData = function (data, stats) {
-                    // 0777 file permission
-                    data.mode = 511;
-                    return old_normalizeEntryData.apply(zipArchive, [data, stats]);
-                };
-
-                zipArchive.pipe(output);
-
-                function packZip() {
+            } catch (err) { }               
+            
+            if (options.exclude_aws_sdk) {
+                var prefix = npm.prefix;
+                npm.prefix = install_location;
+                
+                npm.commands.uninstall([install_location, 'aws-sdk'], function () {
+                    npm.prefix = prefix;
+                    packModules();                 
+                });
+            } else {
+                packModules();
+            }
+            
+            function packModules() { 
+                          
+                npm.commands.install(install_location, [], function () {
+    
+                    var output = fs.createWriteStream(zip_path);
+                    var zipArchive = archive('zip');
+    
+                    var old_normalizeEntryData = zipArchive._normalizeEntryData;
+                    zipArchive._normalizeEntryData = function (data, stats) {
+                        // 0777 file permission
+                        data.mode = 511;
+                        return old_normalizeEntryData.apply(zipArchive, [data, stats]);
+                    };
+    
+                    zipArchive.pipe(output);
+    
                     zipArchive.file('./package.json', { name: 'package.json' });
                     try {
                         zipArchive.file('./README.md', { name: 'README.md' });
@@ -97,20 +110,8 @@ packageTask.getHandler = function (grunt) {
                             });
                         });
                     });
-                }     
-                      
-                if (options.exclude_aws_sdk) {
-                    var prefix = npm.prefix;
-                    npm.prefix = install_location;
-                    
-                    npm.commands.uninstall([install_location, 'aws-sdk'], function () {
-                        npm.prefix = prefix;
-                        packZip();                 
-                    });
-                } else {
-                    packZip();
-                }
-            });
+                });
+            } // packModules
         });
     };
 };     

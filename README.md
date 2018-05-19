@@ -71,9 +71,9 @@ Default value: `true`
 
 Whether or not to exclude the AWS-SDK module from the package.
 
-#### Examples
+## Example
 
-##### Default Options
+### Default Options
 In this example, the default options are used therefore if we have the following `Gruntfile.js`:
 
 ```js

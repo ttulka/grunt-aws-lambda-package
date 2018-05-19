@@ -92,7 +92,7 @@ packageTask.getHandler = function (grunt) {
                     
                     var incl = options.include_files ? options.include_files : buildIncludeFiles();
                                         
-                    zipArchive.glob(incl, { cwd: options.base_folder, dot: true });
+                    zipArchive.glob(incl, { cwd: options.base_folder, dot: true, nocase: true });
 
                     zipArchive.finalize();
                     
@@ -131,7 +131,7 @@ packageTask.getHandler = function (grunt) {
 module.exports = packageTask;
                 
 function buildIncludeFiles() {
-    var exc = 'node_modules';
+    var exc = 'package.json|node_modules|Gruntfile.js';
     
     var reducer = function(acc, v) {
         var val = v.replace(/\r?\n|\r/g, '');

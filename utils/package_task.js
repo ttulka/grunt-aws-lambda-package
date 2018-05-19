@@ -95,17 +95,29 @@ packageTask.getHandler = function (grunt) {
                     zipArchive.glob(incl, { cwd: options.base_folder, dot: true });
 
                     zipArchive.finalize();
+                    
+                    output.on('error', function () {
+                        done(new Error('Cannot write to the file: ' + zip_path));
+                    });
 
                     output.on('close', function () {
-                        mkdirp('./' + options.dist_folder, function (err) {
+                        mkdirp('./' + options.dist_folder, function () {
                             var dist_path = './' + options.dist_folder + '/' + archive_name + '.zip';
                             var dist_zip = fs.createWriteStream(dist_path);
                             fs.createReadStream(zip_path).pipe(dist_zip);
 
+                            dist_zip.on('error', function () {
+                                done(new Error('Cannot write to the file: ' + dist_path));
+                            });
+
                             dist_zip.on('close', function () {
-                                rimraf(install_location, function () {
-                                    grunt.log.writeln('Created package at ' + dist_path);
-                                    done(true);
+                                rimraf(install_location, function (err) {
+                                    if (err) {
+                                        done(new Error('Cannot clean the dir: ' + install_location));
+                                    } else {
+                                        grunt.log.writeln('Created package at ' + dist_path);
+                                        done(true);
+                                    }
                                 });
                             });
                         });

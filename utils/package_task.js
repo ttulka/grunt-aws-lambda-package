@@ -82,17 +82,12 @@ packageTask.getHandler = function (grunt) {
                     };
     
                     zipArchive.pipe(output);
-    
-                    zipArchive.file('./package.json', { name: 'package.json' });
-                    try {
-                        zipArchive.file('./README.md', { name: 'README.md' });
-                    } catch (err) { }  
                     
                     zipArchive.directory(install_location + '/node_modules/', 'node_modules');
                     
                     var incl = options.include_files ? options.include_files : buildIncludeFiles();
                                         
-                    zipArchive.glob(incl, { cwd: options.base_folder, dot: true, nocase: true });
+                    zipArchive.glob(incl, { cwd: options.base_folder, dot: true });
 
                     zipArchive.finalize();
                     
@@ -131,7 +126,7 @@ packageTask.getHandler = function (grunt) {
 module.exports = packageTask;
                 
 function buildIncludeFiles() {
-    var exc = 'package.json|node_modules|Gruntfile.js';
+    var exc = 'node_modules';
     
     var reducer = function(acc, v) {
         var val = v.replace(/\r?\n|\r/g, '');

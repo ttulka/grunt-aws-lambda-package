@@ -15,11 +15,9 @@ grunt.loadNpmTasks('grunt-aws-lambda-package');
 ```
 ## Usage
 
-### lambda_package
+The task `lambda_package` generates a zip including npm production dependencies.
 
-This task generates a zip package including npm dependencies using the default `npm install --production` functionality.
-
-In your project's Gruntfile, add a section named `lambda_package` to the data object passed into `grunt.initConfig()`.
+In the Gruntfile, add a section named `lambda_package` to the data object passed into `grunt.initConfig()`.
 
 ```js
 grunt.initConfig({
@@ -33,39 +31,39 @@ grunt.initConfig({
 });
 ```
 
-#### Options
+### Options
 
-##### options.include_files
+#### options.include_files
 Type: `Array`
 Default value: `**/*`
 
 Files to explicitly include in the package, even if they would be ignored by npm.
 
-##### options.dist_folder
+#### options.dist_folder
 Type: `String`
 Default value: `dist`
 
 The folder where the complete zip files should be saved relative to the Gruntfile.
 
-##### options.base_folder
+#### options.base_folder
 Type: `String`
 Default value: `./`
 
 The folder where the package files should be found relative to the Gruntfile.  
 
-##### options.include_time
+#### options.include_time
 Type: `Boolean`
 Default value: `false`
 
 Whether or not to timestamp the packages, if set to true the current date/time will be included in the zip name.
 
-##### options.include_version
+#### options.include_version
 Type: `Boolean`
 Default value: `false`
 
 Whether or not to include the npm package version in the artifact package name.
  
-##### options.exclude_aws_sdk
+#### options.exclude_aws_sdk
 Type: `Boolean`
 Default value: `true`
 
@@ -103,8 +101,8 @@ And the following in `package.json`
       "package": "grunt package"
     },
     "dependencies": {
-        "aws-sdk": "2.243.1",
-        "jquery": "3.3.1"
+        "aws-sdk": "^2.243.1",
+        "jquery": "^3.3.1"
     },
     "devDependencies": {
         "jasmine": "^3.1.0",

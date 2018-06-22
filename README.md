@@ -2,6 +2,8 @@
 
 > A grunt plugin for packaging functions for [AWS Lambda](http://aws.amazon.com/lambda/).
 
+Node >= 8 is required.
+
 ## Getting Started
 
 ```shell

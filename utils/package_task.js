@@ -20,7 +20,7 @@ packageTask.getHandler = function (grunt) {
             'dist_folder': 'dist',
             'include_time': false,
             'include_version': false,
-            'include_files': undefined,
+            'include_files': '**/*',
             'base_folder': './',
             'exclude_aws_sdk': true
         });
@@ -85,9 +85,7 @@ packageTask.getHandler = function (grunt) {
                     
                     zipArchive.directory(install_location + '/node_modules/', 'node_modules');
                     
-                    var incl = options.include_files ? options.include_files : buildIncludeFiles();
-                                        
-                    zipArchive.glob(incl, { cwd: options.base_folder, dot: true });
+                    zipArchive.glob(options.include_files, { cwd: options.base_folder, dot: true });
 
                     zipArchive.finalize();
                     
@@ -124,24 +122,3 @@ packageTask.getHandler = function (grunt) {
 };     
 
 module.exports = packageTask;
-                
-function buildIncludeFiles() {
-    var exc = 'node_modules';
-    
-    var reducer = function(acc, v) {
-        var val = v.replace(/\r?\n|\r/g, '');
-        if (val) { 
-            return acc + '|' + val;
-        } else {
-          return acc;
-        }
-    }
-    
-    try {
-        var lines = fs.readFileSync(path.resolve('./.npmignore'), "utf8").split('\n');
-        exc = lines.reduce(reducer, exc);
-        
-    } catch (err) { }
-    
-    return '!(' + exc + ')';
-}    

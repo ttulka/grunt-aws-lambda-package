@@ -110,7 +110,7 @@ And the following in `package.json`
         "jasmine": "^3.1.0",
         "grunt": "^1.0.2",
         "grunt-cli": "^1.2.0",
-        "grunt-aws-lambda-package": "0.0.6",        
+        "grunt-aws-lambda-package": "0.0.7",        
     }
 }
 ```
